@@ -1,11 +1,13 @@
 from components import ESC
-
+from components import SteeringServo
 
 class OmRat():
-    def __init__(self, name):
-        self.name = name
-        self.ESC = ESC(17)
+    def __init__(self):
+        self.drive = ESC(signal_pin = 12)
+        self.steering = SteeringServo(signal_pin = 13)
 
     def move(self):
-        self.ESC.forward(0.5)
-        print(self.name, "is moving")
+        self.drive.forward(0.5)
+
+    def turn(self, angle):
+        self.steering.turn(angle)
