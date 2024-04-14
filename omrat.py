@@ -7,7 +7,7 @@ class OmRat():
         self.steering = SteeringServo(signal_pin = 13)
 
     def move(self):
-        self.drive.forward(0.5)
+        self.drive.throttle(0.5)
 
     def turn(self, angle):
         self.steering.turn(angle)
