@@ -1,32 +1,35 @@
-import RPi.GPIO as GPIO
+import pigpio
 import time
 
-GPIO.setwarnings(False)  # Disable warnings
-GPIO.cleanup()
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(12, GPIO.OUT)
+pi = pigpio.pi()
 
-pwm = GPIO.PWM(12, 50)  # 50Hz
-pwm.start(5)  # Start at 5% duty cycle
+if not pi.connected:
+    print("Failed to connect to Pigpio daemon!")
+    exit()
+
+ESC_PIN = 18  # BCM GPIO18 (physical pin 12)
+FREQUENCY = 50
+
+# Calibration sequence
+def calibrate_esc():
+    print("Calibrating ESC...")
+    pi.set_servo_pulsewidth(ESC_PIN, 2000)  # Max throttle
+    time.sleep(2)
+    pi.set_servo_pulsewidth(ESC_PIN, 1000)  # Min throttle
+    time.sleep(2)
+    pi.set_servo_pulsewidth(ESC_PIN, 1500)  # Neutral
+    time.sleep(2)
+    print("Calibration complete.")
 
 try:
-    print("Initializing...")
-    time.sleep(2)
-    pwm.ChangeDutyCycle(10)
-    time.sleep(2)
-    pwm.ChangeDutyCycle(5)
-    print("ESC initialized.")
+    calibrate_esc()
+    
+    print("Testing ESC...")
+    pi.set_servo_pulsewidth(ESC_PIN, 1600)  # Slight forward
+    time.sleep(4)
+    pi.set_servo_pulsewidth(ESC_PIN, 1400)  # Slight reverse
     time.sleep(4)
     
-    print("Running...")
-    pwm.ChangeDutyCycle(7.5)
-    time.sleep(4)
-    pwm.ChangeDutyCycle(9)
-    
-    # Keep PWM active
-    while True:
-        time.sleep(1)
-        
-except KeyboardInterrupt:
-    pwm.stop()
-    GPIO.cleanup()
+finally:
+    pi.set_servo_pulsewidth(ESC_PIN, 0)  # Disable servo pulses
+    pi.stop()
