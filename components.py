@@ -20,6 +20,7 @@ class ESC():
     def throttle(self, power=0.5):
         duty_cycle = ESC.NEUTRAL_DUTY_CYCLE + (power * ESC.DUTY_CYCLE_RANGE)  # Scales power from 0.5 to 1 to duty cycle from 8% to 10%
         self.pwm.ChangeDutyCycle(duty_cycle)
+        print(f"Throttle set to {power}, duty cycle: {duty_cycle}%")
 
     def stop(self):
         # Stopping the motor by setting it to the neutral position
