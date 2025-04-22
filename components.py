@@ -12,6 +12,10 @@ class ESC():
         GPIO.setup(self.signal_pin, GPIO.OUT)
         self.pwm = GPIO.PWM(self.signal_pin, 50)  # Initializing PWM at 50Hz
         self.pwm.start(ESC.NEUTRAL_DUTY_CYCLE)  # Start PWM with 5% duty cycle (neutral position for many ESCs)
+        time.sleep(2)
+        self.pwm.changeDutyCycle(10)
+        time.sleep(2)
+        self.pwm.ChangeDutyCycle(ESC.NEUTRAL_DUTY_CYCLE)
 
     def throttle(self, power=0.5):
         duty_cycle = ESC.NEUTRAL_DUTY_CYCLE + (power * ESC.DUTY_CYCLE_RANGE)  # Scales power from 0.5 to 1 to duty cycle from 8% to 10%
