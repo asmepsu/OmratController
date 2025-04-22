@@ -1,35 +1,49 @@
 import pigpio
 import time
 
+# Connect to the pigpio daemon
 pi = pigpio.pi()
 
 if not pi.connected:
-    print("Failed to connect to Pigpio daemon!")
+    print("Failed to connect to pigpio daemon!")
     exit()
 
-ESC_PIN = 18  # BCM GPIO18 (physical pin 12)
-FREQUENCY = 50
+# Servo configuration
+ESC_PIN = 12  # BCM GPIO 13 (physical pin 33)
+MIN_PULSE = 1000  # 0 degrees (µs)
+MAX_PULSE = 2000  # 180 degrees (µs)
+FREQUENCY = 50    # 50Hz (standard for servos)
 
-# Calibration sequence
-def calibrate_esc():
-    print("Calibrating ESC...")
-    pi.set_servo_pulsewidth(ESC_PIN, 2000)  # Max throttle
-    time.sleep(2)
-    pi.set_servo_pulsewidth(ESC_PIN, 1000)  # Min throttle
-    time.sleep(2)
-    pi.set_servo_pulsewidth(ESC_PIN, 1500)  # Neutral
-    time.sleep(2)
-    print("Calibration complete.")
+def set_angle(pulse_width):
+    pi.set_servo_pulsewidth(ESC_PIN, pulse_width)
 
 try:
-    calibrate_esc()
-    
-    print("Testing ESC...")
-    pi.set_servo_pulsewidth(ESC_PIN, 1600)  # Slight forward
-    time.sleep(4)
-    pi.set_servo_pulsewidth(ESC_PIN, 1400)  # Slight reverse
-    time.sleep(4)
-    
+    print("ARMING ESC...")
+    pi.set_servo_pulsewidth(ESC_PIN, 1000)
+    time.sleep(2)
+    pi.set_servo_pulsewidth(ESC_PIN, 2000)
+    time.sleep(2)
+    pi.set_servo_pulsewidth(ESC_PIN, 1000)
+    time.sleep(2)
+
+    while True:
+        # Sweep from 0 to 180 degrees
+        for pulse in range(MIN_PULSE, MAX_PULSE, 10):
+            set_angle(pulse)
+            # print(f"Angle: {round((pulse - 500)/11.1)}°")
+            print(f"Pulse width: {pulse} µs")
+            time.sleep(0.1)
+        
+        # Sweep back from 180 to 0 degrees
+        for pulse in range(MAX_PULSE, MIN_PULSE, -10):
+            set_angle(pulse)
+            # print(f"Angle: {round((pulse - 500)/11.1)}°")
+            print(f"Pulse width: {pulse} µs")
+            time.sleep(0.1)
+
+except KeyboardInterrupt:
+    print("\nStopping servo...")
 finally:
-    pi.set_servo_pulsewidth(ESC_PIN, 0)  # Disable servo pulses
+    # Clean up
+    pi.set_servo_pulsewidth(ESC_PIN, 0)  # Stop servo pulses
     pi.stop()
