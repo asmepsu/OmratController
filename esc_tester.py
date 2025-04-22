@@ -13,5 +13,8 @@ pwm.ChangeDutyCycle(5)
 
 print("ESC initialized.")
 time.sleep(4)
+print("running")
 pwm.ChangeDutyCycle(7.5)
-
+time.sleep(4)
+pwm.ChangeDutyCycle(9)
+time.sleep(4)
