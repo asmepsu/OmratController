@@ -13,7 +13,7 @@ class ESC():
         self.pwm = GPIO.PWM(self.signal_pin, 50)  # Initializing PWM at 50Hz
         self.pwm.start(ESC.NEUTRAL_DUTY_CYCLE)  # Start PWM with 5% duty cycle (neutral position for many ESCs)
         time.sleep(2)
-        self.pwm.changeDutyCycle(10)
+        self.pwm.ChangeDutyCycle(10)
         time.sleep(2)
         self.pwm.ChangeDutyCycle(ESC.NEUTRAL_DUTY_CYCLE)
 
