@@ -9,7 +9,7 @@ if not pi.connected:
     exit()
 
 # Servo configuration
-SERVO_PIN = 18  # BCM GPIO 13 (physical pin 33)
+SERVO_PIN = 12  # BCM GPIO 13 (physical pin 33)
 MIN_PULSE = 500  # 0 degrees (µs)
 MAX_PULSE = 2500  # 180 degrees (µs)
 FREQUENCY = 50    # 50Hz (standard for servos)
