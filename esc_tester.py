@@ -18,7 +18,7 @@ def initialize_escs():
     for pin in ESC_PINS:
         pi.set_mode(pin, pigpio.OUTPUT)
         pi.set_PWM_frequency(pin, FREQUENCY)
-        pi.set_servo_pulsewidth(pin, MIN_PULSE)
+        pi.set_servo_pulsewidth(pin, 1000)
     
     print("Arming ESCs...")
     time.sleep(2)
